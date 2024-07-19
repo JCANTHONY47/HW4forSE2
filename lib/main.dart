@@ -51,70 +51,55 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Colors.teal,
         title: Text('Your Tasks'),
+        centerTitle: true,
       ),
       body: Container(
         color: Colors.teal,
-        // REFACTOR INTO ListView.builder
-        child: ListView(children: <Widget>[
-          // REFACTOR OUT INTO STATEFUL TASK WIDGETS
-          Card(
-            child: CheckboxListTile(
-              value: taskStates[0],
+        child: ListView.builder(
+          itemCount: taskTitles.length,
+          itemBuilder: (context, index) {
+            return Task(
+              title: taskTitles[index],
+              checked: taskStates[index],
               onChanged: (newValue) {
                 setState(() {
-                  taskStates[0] = newValue;
+                  taskStates[index] = newValue;
                 });
               },
-              activeColor: Colors.teal,
-              title: Text(taskTitles[0],
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontStyle:
-                        taskStates[0] ? FontStyle.italic : FontStyle.normal,
-                    color: taskStates[0] ? Colors.grey : Colors.black,
-                  )),
-              controlAffinity: ListTileControlAffinity.leading,
-            ),
-          ),
-          Card(
-            child: CheckboxListTile(
-              value: taskStates[1],
-              onChanged: (newValue) {
-                setState(() {
-                  taskStates[1] = newValue;
-                });
-              },
-              activeColor: Colors.teal,
-              title: Text(taskTitles[1],
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontStyle:
-                        taskStates[1] ? FontStyle.italic : FontStyle.normal,
-                    color: taskStates[1] ? Colors.grey : Colors.black,
-                  )),
-              controlAffinity: ListTileControlAffinity.leading,
-            ),
-          ),
-          Card(
-            child: CheckboxListTile(
-              value: taskStates[2],
-              onChanged: (newValue) {
-                setState(() {
-                  taskStates[2] = newValue;
-                });
-              },
-              activeColor: Colors.teal,
-              title: Text(taskTitles[2],
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontStyle:
-                        taskStates[2] ? FontStyle.italic : FontStyle.normal,
-                    color: taskStates[2] ? Colors.grey : Colors.black,
-                  )),
-              controlAffinity: ListTileControlAffinity.leading,
-            ),
-          ),
-        ]),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class Task extends StatefulWidget {
+  final String title;
+  final bool checked;
+  final ValueChanged<bool> onChanged;
+
+  Task({@required this.title, @required this.checked, @required this.onChanged});
+
+  @override
+  _TaskState createState() => _TaskState();
+}
+
+class _TaskState extends State<Task> {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: CheckboxListTile(
+        value: widget.checked,
+        onChanged: widget.onChanged,
+        activeColor: Colors.teal,
+        title: Text(widget.title,
+            style: TextStyle(
+              fontSize: 20,
+              fontStyle: widget.checked ? FontStyle.italic : FontStyle.normal,
+              color: widget.checked ? Colors.grey : Colors.black,
+            )),
+        controlAffinity: ListTileControlAffinity.leading,
       ),
     );
   }
