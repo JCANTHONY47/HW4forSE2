@@ -5,7 +5,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,37 +13,30 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(),
+      home: MyHomePage(
+        tasks: [
+          TaskModel(title: 'Understand Code', checked: true),
+          TaskModel(title: 'Figure out duplication', checked: false),
+          TaskModel(title: 'Refactor', checked: true),
+          TaskModel(title: 'Add comments', checked: false),
+          TaskModel(title: 'Commit code', checked: false),
+          TaskModel(title: 'Push to GitHub', checked: false),
+        ],
+      ),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
+  final List<TaskModel> tasks;
+
+  MyHomePage({Key key, @required this.tasks}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<String> taskTitles = [
-    'Understand Code',
-    'Figure out duplication',
-    'Refactor',
-    'Add comments',
-    'commit code',
-    'push to github',
-  ];
-
-  List<bool> taskStates = [
-    true,
-    false,
-    true,
-    false,
-    false,
-    false,
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,14 +48,13 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         color: Colors.teal,
         child: ListView.builder(
-          itemCount: taskTitles.length,
+          itemCount: widget.tasks.length,
           itemBuilder: (context, index) {
             return Task(
-              title: taskTitles[index],
-              checked: taskStates[index],
+              task: widget.tasks[index],
               onChanged: (newValue) {
                 setState(() {
-                  taskStates[index] = newValue;
+                  widget.tasks[index].checked = newValue;
                 });
               },
             );
@@ -74,33 +65,34 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class Task extends StatefulWidget {
-  final String title;
-  final bool checked;
+class Task extends StatelessWidget {
+  final TaskModel task;
   final ValueChanged<bool> onChanged;
 
-  Task({@required this.title, @required this.checked, @required this.onChanged});
+  Task({@required this.task, @required this.onChanged});
 
-  @override
-  _TaskState createState() => _TaskState();
-}
-
-class _TaskState extends State<Task> {
   @override
   Widget build(BuildContext context) {
     return Card(
       child: CheckboxListTile(
-        value: widget.checked,
-        onChanged: widget.onChanged,
+        value: task.checked,
+        onChanged: onChanged,
         activeColor: Colors.teal,
-        title: Text(widget.title,
+        title: Text(task.title,
             style: TextStyle(
               fontSize: 20,
-              fontStyle: widget.checked ? FontStyle.italic : FontStyle.normal,
-              color: widget.checked ? Colors.grey : Colors.black,
+              fontStyle: task.checked ? FontStyle.italic : FontStyle.normal,
+              color: task.checked ? Colors.grey : Colors.black,
             )),
         controlAffinity: ListTileControlAffinity.leading,
       ),
     );
   }
+}
+
+class TaskModel {
+  String title;
+  bool checked;
+
+  TaskModel({@required this.title, @required this.checked});
 }
